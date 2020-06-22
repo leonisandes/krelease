@@ -50,7 +50,7 @@ class GithubClient(
         owner: String,
         repository: String
     ) {
-        val url = "$baseUrl/repos/${owner}/${repository}"
+        val url = "$baseUrl/repos/$owner/$repository"
         val (statusCode, json) = fuelManager
             .get(url)
             .responseJson()
@@ -67,7 +67,7 @@ class GithubClient(
         repository: String,
         tag: String
     ): ReleaseDTO {
-        val url = "$baseUrl/repos/${owner}/${repository}/releases/tags/$tag"
+        val url = "$baseUrl/repos/$owner/$repository/releases/tags/$tag"
         val (statusCode, json) = fuelManager
             .get(url)
             .responseJson()

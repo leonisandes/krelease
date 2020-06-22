@@ -4,5 +4,5 @@ import java.lang.RuntimeException
 
 class RepositoryNotFoundException(owner: String, repository: String) : RuntimeException() {
 
-    override val message: String = "Repository ${owner}/${repository} not found."
+    override val message: String = "Repository $owner/$repository not found."
 }

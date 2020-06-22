@@ -26,7 +26,7 @@ class KRelease(
         println("[!] Validating owner and repository...")
         githubClient.validRepositoryOrThrow(owner = owner, repository = repository)
 
-        val releaseDTO= if (update) { updateRelease() } else { createNewRelease() }
+        val releaseDTO = if (update) { updateRelease() } else { createNewRelease() }
 
         println("[!] Searching files to upload...")
         githubClient.asyncUploadAssetsOnRelease(

@@ -80,5 +80,4 @@ class Configuration : CliktCommand() {
             githubClient = githubClient
         ).execute()
     }
-
 }

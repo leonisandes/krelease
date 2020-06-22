@@ -3,7 +3,6 @@ package io.github.leonisandes.krelease.integration.github
 import com.github.kittinunf.fuel.core.FuelManager
 import io.github.leonisandes.krelease.github.GithubClient
 import io.github.leonisandes.krelease.github.dto.CreateReleaseDTO
-import io.github.leonisandes.krelease.github.dto.UpdateReleaseDTO
 import io.github.leonisandes.krelease.integration.IntegrationTestExtension
 import java.io.File
 import org.assertj.core.api.Assertions.assertThatCode

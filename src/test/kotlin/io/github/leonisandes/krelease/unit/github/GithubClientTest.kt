@@ -45,8 +45,8 @@ class GithubClientTest {
     @Nested
     @DisplayName("When validating a repository")
     inner class ValidateRepository {
-        private val url = "$baseUrl/repos/${owner}/${repository}"
-        private val invalidUrl = "$baseUrl/repos/${invalidOwner}/${invalidRepository}"
+        private val url = "$baseUrl/repos/$owner/$repository"
+        private val invalidUrl = "$baseUrl/repos/$invalidOwner/$invalidRepository"
 
         @Test
         @DisplayName("given a valid owner and repository should validate")
@@ -91,12 +91,11 @@ class GithubClientTest {
         }
     }
 
-
     @Nested
     @DisplayName("When getting a release")
     inner class GetRelease {
-        private val url = "$baseUrl/repos/${owner}/${repository}/releases/tags/$tag"
-        private val invalidUrl = "$baseUrl/repos/${invalidOwner}/${invalidRepository}/releases/tags/$tag"
+        private val url = "$baseUrl/repos/$owner/$repository/releases/tags/$tag"
+        private val invalidUrl = "$baseUrl/repos/$invalidOwner/$invalidRepository/releases/tags/$tag"
 
         @Test
         @DisplayName("given a valid owner, repository and tag should return a release")
@@ -137,7 +136,7 @@ class GithubClientTest {
 
             assertThatExceptionOfType(ReleaseNotFoundException::class.java)
                 .isThrownBy { githubClient.getRelease(owner = owner, repository = repository, tag = tag) }
-                .matches { it.message == "It was not possible to find a release by tag ${tag}." }
+                .matches { it.message == "It was not possible to find a release by tag $tag." }
         }
     }
 
@@ -277,6 +276,5 @@ class GithubClientTest {
                 )
             }.doesNotThrowAnyException()
         }
-
     }
 }

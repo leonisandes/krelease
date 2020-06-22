@@ -8,10 +8,10 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.verify
+import java.io.File
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import java.io.File
 
 class KReleaseTest {
 
@@ -50,7 +50,6 @@ class KReleaseTest {
             verify(exactly = 0) { githubClient.updateRelease(any()) }
             verify(exactly = 1) { githubClient.asyncUploadAssetsOnRelease(any(), any(), any(), any()) }
         }
-
     }
     @Nested
     @DisplayName("When updateing a release")
@@ -74,7 +73,7 @@ class KReleaseTest {
             )
 
             every { githubClient.validRepositoryOrThrow(any(), any()) } just Runs
-            every { githubClient.getRelease(any(),any(),any()) } returns ReleaseDTOObjectMother.new()
+            every { githubClient.getRelease(any(), any(), any()) } returns ReleaseDTOObjectMother.new()
             every { githubClient.updateRelease(any()) } returns ReleaseDTOObjectMother.new()
             every { githubClient.asyncUploadAssetsOnRelease(any(), any(), any(), any()) } just Runs
 
@@ -85,7 +84,5 @@ class KReleaseTest {
             verify(exactly = 1) { githubClient.updateRelease(any()) }
             verify(exactly = 1) { githubClient.asyncUploadAssetsOnRelease(any(), any(), any(), any()) }
         }
-
     }
-
 }
