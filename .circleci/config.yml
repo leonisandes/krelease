@@ -5,34 +5,34 @@ executors:
         environment:
             IMAGE_NAME: leonisandes/krelease
         docker:
-            - image: circleci/buildpack-deps:stretch
+            -   image: circleci/buildpack-deps:stretch
 
 commands:
     restore_dependencies_cache:
         description: 'Try to restore dependencies cache'
         steps:
-            - restore_cache:
-                keys:
-                    - v1-dependencies-{{ checksum "build.gradle.kts" }}
-                    - v1-dependencies-
-            - run: ./gradlew dependencies
+            -   restore_cache:
+                    keys:
+                        - v1-dependencies-{{ checksum "build.gradle.kts" }}
+                        - v1-dependencies-
+            -   run: ./gradlew dependencies
 
     save_dependencies_cache:
         description: 'Save dependencies cache'
         steps:
-            - save_cache:
-                paths:
-                    - ~/.gradle
-                key: v1-dependencies-{{ checksum "build.gradle.kts" }}
+            -   save_cache:
+                    paths:
+                        - ~/.gradle
+                    key: v1-dependencies-{{ checksum "build.gradle.kts" }}
 
 jobs:
     cache-dependencies:
         working_directory: ~/krelease
         docker:
-            - image: circleci/openjdk:11-jdk-stretch-node-browsers
+            -   image: circleci/openjdk:11-jdk-stretch-node-browsers
                 environment:
-                    JAVA_TOOL_OPTIONS: '-Xmx4G'
-                    GRADLE_OPTS: '-Xmx4G -Dorg.gradle.daemon=false -DdisablePreDex'
+                    JAVA_TOOL_OPTIONS: "-Xmx4G"
+                    GRADLE_OPTS: "-Xmx4G -Dorg.gradle.daemon=false -DdisablePreDex"
                     TERM: dumb
         steps:
             - checkout
@@ -42,38 +42,38 @@ jobs:
     unit-test:
         working_directory: ~/krelease
         docker:
-            - image: circleci/openjdk:11-jdk-stretch-node-browsers
+            -   image: circleci/openjdk:11-jdk-stretch-node-browsers
                 environment:
                     JAVA_TOOL_OPTIONS: '-Xmx4G'
                     GRADLE_OPTS: '-Xmx4G -Dorg.gradle.daemon=false -DdisablePreDex'
                     TERM: dumb
         steps:
             - checkout
-            - run:
-                name: Unit tests
-                command: ./gradlew test -Dtest.type=unit
-            - run:
-                name: Generate Jacoco Report
-                command: |
-                    ./gradlew jacocoTestReport
-            - run:
-                name: Save Tests results
-                command: |
-                    mkdir -p ~/junit/unit/results
-                    mv build/reports/jacoco/test/jacocoTestReport.xml ~/junit/unit
-                    find . -type f -regex '.*/build/test-results/.*xml' -exec cp {} ~/junit/unit/results \;
-                    when: always
-            - store_test_results:
-                path: ~/junit/unit/results
-            - persist_to_workspace:
-                root: ~/junit
-                paths:
-                    - unit/jacocoTestReport.xml
+            -   run:
+                    name: Unit tests
+                    command: ./gradlew test -Dtest.type=unit
+            -   run:
+                    name: Generate Jacoco Report
+                    command: |
+                        ./gradlew jacocoTestReport
+            -   run:
+                    name: Save Tests results
+                    command: |
+                        mkdir -p ~/junit/unit/results
+                        mv build/reports/jacoco/test/jacocoTestReport.xml ~/junit/unit
+                        find . -type f -regex '.*/build/test-results/.*xml' -exec cp {} ~/junit/unit/results \;
+                        when: always
+            -   store_test_results:
+                    path: ~/junit/unit/results
+            -   persist_to_workspace:
+                    root: ~/junit
+                    paths:
+                        - unit/jacocoTestReport.xml
 
     integration-test:
         working_directory: ~/krelease
         docker:
-            - image: circleci/openjdk:11-jdk-stretch-node-browsers
+            -   image: circleci/openjdk:11-jdk-stretch-node-browsers
                 environment:
                     JAVA_TOOL_OPTIONS: '-Xmx4G'
                     GRADLE_OPTS: '-Xmx4G -Dorg.gradle.daemon=false -DdisablePreDex'
@@ -83,107 +83,107 @@ jobs:
             JAVA_TOOL_OPTIONS: '-Xmx4G'
             GRADLE_OPTS: '-Xmx4G -Dorg.gradle.daemon=false -DdisablePreDex'
         steps:
-            - run:
-                name: Download Java 11
-                command: |
-                    sudo apt update
-                    sudo apt install openjdk-11-jdk
+            -   run:
+                    name: Download Java 11
+                    command: |
+                        sudo apt update
+                        sudo apt install openjdk-11-jdk
             - checkout
-            - run:
-                name: Integration tests
-                command: ./gradlew test -Dtest.type=integration
-            - run:
-                name: Generate Jacoco Report
-                command: |
-                    ./gradlew jacocoTestReport
-            - run:
-                name: Save Tests results
-                command: |
-                    mkdir -p ~/junit/integration/results
-                    mv build/reports/jacoco/test/jacocoTestReport.xml ~/junit/integration
-                    find . -type f -regex '.*/build/test-results/.*xml' -exec cp {} ~/junit/integration/results \;
-                when: always
-            - store_test_results:
-                path: ~/junit/integration/results
-            - persist_to_workspace:
-                root: ~/junit
-                paths:
-                    - integration/jacocoTestReport.xml
+            -   run:
+                    name: Integration tests
+                    command: ./gradlew test -Dtest.type=integration
+            -   run:
+                    name: Generate Jacoco Report
+                    command: |
+                        ./gradlew jacocoTestReport
+            -   run:
+                    name: Save Tests results
+                    command: |
+                        mkdir -p ~/junit/integration/results
+                        mv build/reports/jacoco/test/jacocoTestReport.xml ~/junit/integration
+                        find . -type f -regex '.*/build/test-results/.*xml' -exec cp {} ~/junit/integration/results \;
+                    when: always
+            -   store_test_results:
+                    path: ~/junit/integration/results
+            -   persist_to_workspace:
+                    root: ~/junit
+                    paths:
+                        - integration/jacocoTestReport.xml
 
     report-tests:
         working_directory: ~/krelease
         docker:
-            - image: cimg/base:2020.01
+            -   image: cimg/base:2020.01
         steps:
             - checkout
-            - attach_workspace:
-                at: ~/junit
-            - run:
-                name: Send Coverage Report
-                command: |
-                    cd ~
-                    bash <(curl -s https://codecov.io/bash) -y ~/krelease/codecov.yml
+            -   attach_workspace:
+                    at: ~/junit
+            -   run:
+                    name: Send Coverage Report
+                    command: |
+                        cd ~
+                        bash <(curl -s https://codecov.io/bash) -y ~/krelease/codecov.yml
     lint:
         working_directory: ~/krelease
         docker:
-            - image: circleci/openjdk:11-jdk-stretch-node-browsers
+            -   image: circleci/openjdk:11-jdk-stretch-node-browsers
                 environment:
                     JAVA_TOOL_OPTIONS: '-Xmx4G'
                     GRADLE_OPTS: '-Xmx4G -Dorg.gradle.daemon=false -DdisablePreDex'
                     TERM: dumb
         steps:
             - checkout
-            - run:
-                name: Run lint
-                command: ./gradlew detekt
+            -   run:
+                    name: Run lint
+                    command: ./gradlew detekt
 
     build:
         working_directory: ~/krelease
         docker:
-            - image: circleci/openjdk:11-jdk-stretch-node-browsers
+            -   image: circleci/openjdk:11-jdk-stretch-node-browsers
         steps:
             - checkout
-            - run:
-                name: Run assemble
-                command: ./gradlew assemble
-            - persist_to_workspace:
-                root: .
-                paths:
-                    - build/libs
+            -   run:
+                    name: Run assemble
+                    command: ./gradlew assemble
+            -   persist_to_workspace:
+                    root: .
+                    paths:
+                        - build/libs
 
     docker-build-publish:
         executor: docker-publisher
         working_directory: ~/krelease
         steps:
             - checkout
-            - attach_workspace:
-                at: ~/krelease
+            -   attach_workspace:
+                    at: ~/krelease
             - setup_remote_docker
-            - run:
-                name: Build Docker image
-                command: docker build -t $IMAGE_NAME:latest .
-            - run:
-                name: Publish Docker Image to Docker Hub
-                command: |
-                    echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-                    docker tag $IMAGE_NAME:latest $IMAGE_NAME:${CIRCLE_TAG}
-                    docker push $IMAGE_NAME:latest
-                    docker push $IMAGE_NAME:$IMAGE_TAG
+            -   run:
+                    name: Build Docker image
+                    command: docker build -t $IMAGE_NAME:latest .
+            -   run:
+                    name: Publish Docker Image to Docker Hub
+                    command: |
+                        echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+                        docker tag $IMAGE_NAME:latest $IMAGE_NAME:${CIRCLE_TAG}
+                        docker push $IMAGE_NAME:latest
+                        docker push $IMAGE_NAME:$IMAGE_TAG
 
 workflows:
     'Test and Build':
         jobs:
             - cache-dependencies
-            - unit-test:
-                requires:
-                    - cache-dependencies
+            -   unit-test:
+                    requires:
+                        - cache-dependencies
             - integration-test
             - lint
-            - report-tests:
-                requires:
-                    - unit-test
-                    - integration-test
-            - build:
+            -   report-tests:
+                    requires:
+                        - unit-test
+                        - integration-test
+            -   build:
                 filters:
                     branches:
                         only: master
@@ -193,19 +193,19 @@ workflows:
                         - lint
     'Build and Publish':
         jobs:
-            - build:
-                filters:
-                   tags:
-                       only: /^v\d+\.\d+\.\d+$/
-                   branches:
-                       ignore:
-                           - /.*/
-            - docker-build-publish:
-                filters:
-                    tags:
-                        only: /^v\d+\.\d+\.\d+$/
-                    branches:
-                        ignore:
-                            - /.*/
-                requires:
-                    - build
+            -   build:
+                    filters:
+                        tags:
+                            only: /^v\d+\.\d+\.\d+$/
+                        branches:
+                            ignore:
+                                - /.*/
+            -   docker-build-publish:
+                    filters:
+                        tags:
+                            only: /^v\d+\.\d+\.\d+$/
+                        branches:
+                            ignore:
+                                - /.*/
+                    requires:
+                        - build
